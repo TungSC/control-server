@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const RedisPrefixServerUsage = "ovp_nodejs:Server:resource:"
+const RedisPrefixServerUsage = "ovp_nodejs_dev:Server:resource:"
 
 type result struct {
 	ID     string    `json:"id"`
@@ -67,10 +67,6 @@ func worker(redis *Redis) {
 
 	jsonData, _ := json.Marshal(usedData)
 	key := fmt.Sprintf("%s%s:%s", RedisPrefixServerUsage, serverEndpoint, serverPort)
-	err = redis.Del(key)
-	if err != nil {
-		return
-	}
 
 	err = redis.Set(key, string(jsonData), -1)
 	if err != nil {
