@@ -45,6 +45,8 @@ func main() {
 			DB:    dbNum,
 		})
 
+		usageData(Redis)
+
 		topic := Redis.Subscribe(RedisPubSubChannel)
 		channel := topic.Channel()
 		port := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
