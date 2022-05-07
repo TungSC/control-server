@@ -11,6 +11,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
 )
 
 var Redis *db.Redis
@@ -46,6 +47,12 @@ func main() {
 	topic := Redis.Subscribe(RedisPubSubChannel)
 	channel := topic.Channel()
 	port := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
+
+	log.Info("Server is running...")
+	err := r.Run()
+	if err != nil {
+		log.Fatalf("Starting server: %s", err)
+	}
 
 	for msg := range channel {
 		var receiveMessage db.ReceiveMessage
