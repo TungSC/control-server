@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"encoding/json"
@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"control-server/db"
 )
 
 const RedisPrefixServerUsage = "ovp_nodejs:Server:resource:"
@@ -27,14 +25,14 @@ type usageDataResponse struct {
 	} `json:"net"`
 }
 
-func usageData(redis *db.Redis) {
+func UsageData(redis *Redis) {
 	t := time.NewTicker(1 * time.Second)
 	for range t.C {
 		worker(redis)
 	}
 }
 
-func worker(redis *db.Redis) {
+func worker(redis *Redis) {
 	var usedData usageDataResponse
 	var serverEndpoint = os.Getenv("SERVER_ENDPOINT")
 	var serverPort = os.Getenv("SERVER_PORT")
