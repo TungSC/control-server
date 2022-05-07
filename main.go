@@ -38,38 +38,40 @@ func main() {
 	serverPort := os.Getenv("SERVER_PORT")
 	dbNum, _ := strconv.Atoi(dbConfig)
 
-	Redis = db.NewRedis(db.RedisConfig{
-		Addrs: []string{os.Getenv("REDIS_SERVER")},
-		Pwd:   os.Getenv("REDIS_PASSWORD"),
-		DB:    dbNum,
-	})
+	go func() {
+		Redis = db.NewRedis(db.RedisConfig{
+			Addrs: []string{os.Getenv("REDIS_SERVER")},
+			Pwd:   os.Getenv("REDIS_PASSWORD"),
+			DB:    dbNum,
+		})
 
-	topic := Redis.Subscribe(RedisPubSubChannel)
-	channel := topic.Channel()
-	port := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
+		topic := Redis.Subscribe(RedisPubSubChannel)
+		channel := topic.Channel()
+		port := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
+
+		for msg := range channel {
+			var receiveMessage db.ReceiveMessage
+			// Unmarshal the data into the user
+			err := json.Unmarshal([]byte(msg.Payload), &receiveMessage)
+			if err != nil {
+				_ = fmt.Errorf("json.Unmarshal: %w", err)
+			}
+
+			if receiveMessage.Server == port {
+				if receiveMessage.Action == "active" {
+					exec.Command("sh", "-c", "pm2 start main").Run()
+				}
+
+				if receiveMessage.Action == "inactive" {
+					exec.Command("sh", "-c", "pm2 stop main").Run()
+				}
+			}
+		}
+	}()
 
 	log.Info("Server is running...")
 	err := r.Run()
 	if err != nil {
 		log.Fatalf("Starting server: %s", err)
-	}
-
-	for msg := range channel {
-		var receiveMessage db.ReceiveMessage
-		// Unmarshal the data into the user
-		err := json.Unmarshal([]byte(msg.Payload), &receiveMessage)
-		if err != nil {
-			_ = fmt.Errorf("json.Unmarshal: %w", err)
-		}
-
-		if receiveMessage.Server == port {
-			if receiveMessage.Action == "active" {
-				exec.Command("sh", "-c", "pm2 start main").Run()
-			}
-
-			if receiveMessage.Action == "inactive" {
-				exec.Command("sh", "-c", "pm2 stop main").Run()
-			}
-		}
 	}
 }
