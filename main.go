@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"strconv"
@@ -49,7 +50,7 @@ func main() {
 
 		topic := Redis.Subscribe(RedisPubSubChannel)
 		channel := topic.Channel()
-		port := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
+		ip := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
 
 		for msg := range channel {
 			var receiveMessage db.ReceiveMessage
@@ -59,13 +60,32 @@ func main() {
 				_ = fmt.Errorf("json.Unmarshal: %w", err)
 			}
 
-			if receiveMessage.Server == port {
+			// service
+			if receiveMessage.Server == "" {
+				continue
+			}
+
+			if receiveMessage.Server == ip {
+				command := ""
+				newUrl := url.URL{
+					Host: receiveMessage.Server,
+				}
+				port := newUrl.Port()
+
+				switch port {
+				case "1935":
+					command = "live-srs"
+				case "4433":
+					command = "cdn-main"
+				}
+
+				// service's child
 				if receiveMessage.Action == "active" {
-					exec.Command("sh", "-c", "pm2 start main").Run()
+					exec.Command("sh", "-c", fmt.Sprintf("pm2 start %s", command)).Run()
 				}
 
 				if receiveMessage.Action == "inactive" {
-					exec.Command("sh", "-c", "pm2 stop main").Run()
+					exec.Command("sh", "-c", fmt.Sprintf("pm2 stop %s", command)).Run()
 				}
 			}
 		}
