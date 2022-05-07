@@ -45,7 +45,7 @@ func main() {
 			DB:    dbNum,
 		})
 
-		usageData(Redis)
+		go usageData(Redis)
 
 		topic := Redis.Subscribe(RedisPubSubChannel)
 		channel := topic.Channel()
