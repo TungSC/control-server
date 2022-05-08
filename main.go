@@ -36,7 +36,6 @@ func main() {
 
 	dbConfig := os.Getenv("REDIS_DB")
 	serverEndpoint := os.Getenv("SERVER_ENDPOINT")
-	serverPort := os.Getenv("SERVER_PORT")
 	dbNum, _ := strconv.Atoi(dbConfig)
 
 	go func() {
@@ -50,7 +49,6 @@ func main() {
 
 		topic := Redis.Subscribe(RedisPubSubChannel)
 		channel := topic.Channel()
-		ip := fmt.Sprintf("%s:%s", serverEndpoint, serverPort)
 
 		for msg := range channel {
 			var receiveMessage db.ReceiveMessage
@@ -65,17 +63,18 @@ func main() {
 				continue
 			}
 
-			if receiveMessage.Server == ip {
+			newUrl := url.URL{
+				Host: receiveMessage.Server,
+			}
+
+			if newUrl.Hostname() == serverEndpoint {
 				command := ""
-				newUrl := url.URL{
-					Host: receiveMessage.Server,
-				}
 				port := newUrl.Port()
 
 				switch port {
 				case "1935":
 					command = "live-srs"
-				case "4433":
+				case "1954":
 					command = "cdn-main"
 				}
 
