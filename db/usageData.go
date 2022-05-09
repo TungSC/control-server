@@ -35,7 +35,6 @@ func UsageData(redis *Redis) {
 func worker(redis *Redis) {
 	var usedData usageDataResponse
 	var serverEndpoint = os.Getenv("SERVER_ENDPOINT")
-	var serverPort = os.Getenv("SERVER_PORT")
 
 	ram, err := getRamUsage()
 	if err != nil {
@@ -66,7 +65,7 @@ func worker(redis *Redis) {
 	}
 
 	jsonData, _ := json.Marshal(usedData)
-	key := fmt.Sprintf("%s%s:%s", RedisPrefixServerUsage, serverEndpoint, serverPort)
+	key := fmt.Sprintf("%s%s", RedisPrefixServerUsage, serverEndpoint)
 
 	err = redis.Set(key, string(jsonData), -1)
 	if err != nil {
