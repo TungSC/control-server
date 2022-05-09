@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"control-server/db"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -76,6 +77,8 @@ func main() {
 					command = "live-srs"
 				case "1954":
 					command = "cdn-main"
+				default:
+					command = "pegatv-transcode-dev-live-1"
 				}
 
 				// service's child
