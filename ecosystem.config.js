@@ -3,7 +3,7 @@ const env = {
     REDIS_SERVER: "119.82.141.213:6379",
     REDIS_PASSWORD:"MkZ5bc9zUC9ZTsiKR3gC",
     REDIS_DB: "1",
-    PORT: "8888",
+    PORT: "2577",
 
     SERVER_ENDPOINT: "103.162.31.207",
     SERVER_PORT: "443"
