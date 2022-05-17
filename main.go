@@ -12,7 +12,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,8 +20,6 @@ var Redis *db.Redis
 const RedisPubSubChannel = "redis_pub_sub_server_resource"
 
 func main() {
-	godotenv.Load()
-
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
