@@ -5,8 +5,8 @@ const env = {
     REDIS_DB: "1",
     PORT: "2577",
 
-    SERVER_ENDPOINT: "103.162.31.207",
-    SERVER_PORT: "443"
+    SERVER_ENDPOINT: "119.82.141.213",
+    SERVER_PORT: "1953"
 };
 
 
