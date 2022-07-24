@@ -74,6 +74,8 @@ func main() {
 					command = "live-srs"
 				case "1954":
 					command = "cdn-main"
+				case "2443":
+					command = "cdn-main"
 				default:
 					command = "pegatv-transcode-dev-live-1"
 				}
