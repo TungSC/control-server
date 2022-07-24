@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const RedisPrefixServerUsage = "ovp_nodejs_dev:Server:resource:"
+const RedisPrefixServerUsage = "box_nodejs_dev:Server:resource:"
 
 type result struct {
 	ID     string    `json:"id"`
