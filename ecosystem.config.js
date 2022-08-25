@@ -5,8 +5,8 @@ const env = {
     REDIS_DB: "1",
     PORT: "2577",
 
-    SERVER_ENDPOINT: "119.82.141.213",
-    SERVER_PORT: "1953"
+    SERVER_ENDPOINT: "103.252.1.59",
+    CMS_ENDPOINT: "https://stg-live-cms.gglive.vn/",
 };
 
 
